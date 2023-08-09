@@ -1,0 +1,105 @@
+-- Creating a table to store information about branches.
+CREATE TABLE Branch (
+    name VARCHAR(25),
+    address VARCHAR(50),
+    PRIMARY KEY (name)
+);
+
+-- Creating a table to store information about customers.
+CREATE TABLE Customer (
+    ssn CHAR(9),
+    fname VARCHAR(25),
+    lname VARCHAR(25),
+    phone CHAR(10),
+    address VARCHAR(50),
+    fv_branch VARCHAR(25),
+    PRIMARY KEY (ssn),
+    FOREIGN KEY (fv_branch) REFERENCES Branch (name)
+);
+
+-- Creating a table to store information about accounts.
+CREATE TABLE Account (
+    acc_no CHAR(9),
+    balance DECIMAL(15,2),
+    atype VARCHAR(10),
+    fee DECIMAL (7,2),
+    PRIMARY KEY (acc_no)
+);
+
+-- Creating a table to establish ownership of accounts by customers.
+CREATE TABLE Owns (
+    ssn CHAR(9),
+    acc_no CHAR(9),
+    own_date DATE,
+    FOREIGN KEY (ssn) REFERENCES Customer (ssn),
+    FOREIGN KEY (acc_no) REFERENCES Account (acc_no)
+);
+
+-- Creating a table to store information about loans.
+CREATE TABLE Loan (
+    loan_no CHAR(9),
+    amount DECIMAL (15,2),
+    ltype VARCHAR(10),
+    interest_rate DECIMAL (7,4),
+    PRIMARY KEY (loan_no)
+);
+
+-- Creating a table to store information about loan payments.
+CREATE TABLE Payment (
+    loan_no CHAR(9),
+    payment_no CHAR(4),
+    amount DECIMAL(10,2),
+    method VARCHAR(10),
+    status VARCHAR(10),
+    due_date DATE,
+    PRIMARY KEY (payment_no),
+    FOREIGN KEY (loan_no) REFERENCES Loan(loan_no)
+);
+
+-- Creating a table to establish borrowing relationships between customers and loans.
+CREATE TABLE Borrows (
+    ssn CHAR(9),
+    loan_no CHAR(9),
+    FOREIGN KEY (ssn) REFERENCES Customer (ssn),
+    FOREIGN KEY (loan_no) REFERENCES Loan (loan_no)
+);
+
+-- Inserting a payment record.
+INSERT INTO Payment(payment_no, method, status)
+VALUES ('1231', 'online', 'Late');
+
+-- Deleting payment records with a specific method.
+DELETE FROM Payment WHERE method = 'online';
+
+-- Inserting a branch record.
+INSERT INTO Branch(name, address)
+VALUES ('lemon', 'yummy street');
+
+-- Inserting a customer record.
+INSERT INTO Customer(ssn, fname, lname)
+VALUES ('504', 'john', 'doe');
+
+-- Inserting an account record.
+INSERT INTO Account(acc_no, atype)
+VALUES ('9129', 'checking');
+
+-- Inserting an ownership record.
+INSERT INTO Owns (own_date)
+VALUES ('2022-03-11');
+
+-- Inserting a loan record.
+INSERT INTO Loan (loan_no, amount)
+VALUES ('1234', '20.00');
+
+-- Updating account balances for specific account types.
+UPDATE Account
+SET balance = '1234'
+WHERE atype = 'checking';
+
+DROP TABLE Borrows;
+DROP TABLE Payment;
+DROP TABLE Loan;
+DROP TABLE Owns;
+DROP TABLE Account;
+DROP TABLE Customer;
+DROP TABLE Branch;
